@@ -23,6 +23,7 @@ Page({
     nowTemp: '',
     nowWeather: '',
     nowWeatherBackground:'',
+    forecast: [1, 2, 3, 4, 5, 6, 7, 8, 9]
   },
 
   // 每次启动时
