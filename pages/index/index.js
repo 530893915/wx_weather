@@ -26,7 +26,7 @@ Page({
     nowTemp: '',
     nowWeather: '',
     nowWeatherBackground:'',
-    forecast: []
+    hourlyWeather: []
   },
 
   // 每次启动时
@@ -68,19 +68,18 @@ Page({
           backgroundColor: weatherColorMap[weather],
         })
 
-        let forecast = []
+        let forecast = result.forecast
+        let hourlyWeather = []
         let nowHour = new Date().getHours()
-        let forecast2 = result.forecast
-        console.log(forecastWeather)
         for(let i=0;i<24;i+=3){
-          forecast.push({
+          hourlyWeather.push({
             time:(i + nowHour) % 24 + '时',
-            iconPath:'/images/' + forecast2[i/3].weather + '-icon.png',
-            temp:'12°'
+            iconPath:'/images/'+ forecast[i/3].weather +'-icon.png',
+            temp:forecast[i/3].temp + '°'
           })
         }
-        forecast[0].time = '现在'
-        this.setData({forecast})
+        hourlyWeather[0].time = '现在'
+        this.setData({hourlyWeather})
       },
 
       // 用回调函数来判断是否停止下拉刷新
