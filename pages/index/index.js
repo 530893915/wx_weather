@@ -18,12 +18,15 @@ const weatherColorMap = {
   'snow': '#aae1fc'
 }
 
+
+
+
 Page({
   data: {
     nowTemp: '',
     nowWeather: '',
     nowWeatherBackground:'',
-    forecast: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    forecast: []
   },
 
   // 每次启动时
@@ -51,12 +54,12 @@ Page({
       success: res => {
         let result = res.data.result
         let temp = result.now.temp
-        let weather = result.now.weather
+        let weather = result.now.weather  
         console.log(temp, weather)
         this.setData({
           nowTemp: temp + '°',
           nowWeather: weatherMap[weather],
-          nowWeatherBackground: "/images/" + weather + "-bg.png"
+          nowWeatherBackground: "/images/" + weather + "-bg.png",
         })
 
         // 设置导航栏颜色随天气而变化
@@ -64,6 +67,17 @@ Page({
           frontColor: '#000000',
           backgroundColor: weatherColorMap[weather],
         })
+
+        let forecast = []
+        let nowHour = new Date().getHours()
+        for(let i=0;i<24;i+=3){
+          forecast.push({
+            time:(i + nowHour) % 24 + '时',
+            iconPath:'/images/sunny-icon.png',
+            temp:'12°'
+          })
+        }
+        this.setData({forecast})
       },
 
       // 用回调函数来判断是否停止下拉刷新
