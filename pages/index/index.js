@@ -53,33 +53,8 @@ Page({
       },
       success: res => {
         let result = res.data.result
-        let temp = result.now.temp
-        let weather = result.now.weather  
-        console.log(temp, weather)
-        this.setData({
-          nowTemp: temp + '°',
-          nowWeather: weatherMap[weather],
-          nowWeatherBackground: "/images/" + weather + "-bg.png",
-        })
-
-        // 设置导航栏颜色随天气而变化
-        wx.setNavigationBarColor({
-          frontColor: '#000000',
-          backgroundColor: weatherColorMap[weather],
-        })
-
-        let forecast = result.forecast
-        let hourlyWeather = []
-        let nowHour = new Date().getHours()
-        for(let i=0;i<24;i+=3){
-          hourlyWeather.push({
-            time:(i + nowHour) % 24 + '时',
-            iconPath:'/images/'+ forecast[i/3].weather +'-icon.png',
-            temp:forecast[i/3].temp + '°'
-          })
-        }
-        hourlyWeather[0].time = '现在'
-        this.setData({hourlyWeather})
+        this.setNow(result)
+        this.setHourlyWeather(result) 
       },
 
       // 用回调函数来判断是否停止下拉刷新
@@ -90,5 +65,38 @@ Page({
         
       }
     })
+  },
+
+  // 设置当前的天气
+  setNow(result){
+    let temp = result.now.temp
+    let weather = result.now.weather
+    console.log(temp, weather)
+    this.setData({
+      nowTemp: temp + '°',
+      nowWeather: weatherMap[weather],
+      nowWeatherBackground: "/images/" + weather + "-bg.png",
+    })
+    // 设置导航栏颜色随天气而变化
+    wx.setNavigationBarColor({
+      frontColor: '#000000',
+      backgroundColor: weatherColorMap[weather],
+    })
+  },
+
+  // 设置未来24小时的天气
+  setHourlyWeather(result){
+    let forecast = result.forecast
+    let hourlyWeather = []
+    let nowHour = new Date().getHours()
+    for (let i = 0; i < 8; i++) {
+      hourlyWeather.push({
+        time: (i * 3 + nowHour) % 24 + '时',
+        iconPath: '/images/' + forecast[i].weather + '-icon.png',
+        temp: forecast[i].temp + '°'
+      })
+    }
+    hourlyWeather[0].time = '现在'
+    this.setData({ hourlyWeather })
   }
 })
