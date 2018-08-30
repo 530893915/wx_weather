@@ -27,6 +27,31 @@
   z-index: -1;
 }
 
+.weather-wrapper .day-weather{
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 40rpx;
+  right: 40rpx;
+  height: 90rpx;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 30rpx;
+  line-height: 42rpx;
+  opacity: 0.5;
+}
+
+.weather-wrapper .day-weather .temp-text{
+  flex-grow: 1;
+  padding-right: 30rpx;
+  text-align: right;
+}
+
+.weather-wrapper .day-weather .arrow-icon{
+  width: 13rpx;
+  height: 24rpx;
+}
+
 .timetips{
   display: flex;
   justify-content: center;
