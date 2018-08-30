@@ -18,7 +18,16 @@ const weatherColorMap = {
   'snow': '#aae1fc'
 }
 
+// 引入腾讯地图SDK
+const QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
 
+const UNPROMPTED = 0
+const UNAUTHORIZED = 1
+const AUTHORIZED = 2
+
+const UNPROMPTED_TIPS = "点击获取当前位置"
+const UNAUTHORIZED_TIPS = "点击开启位置权限"
+const AUTHORIZED_TIPS = ""
 
 
 Page({
@@ -28,11 +37,18 @@ Page({
     nowWeatherBackground:'',
     hourlyWeather: [],
     todayTemp:'',
-    todayDate:''
+    todayDate:'',
+    city:'未知城市',
+    locationAuthType:UNPROMPTED,
+    locationTipsText:UNPROMPTED_TIPS
   },
 
   // 每次启动时
   onLoad() {
+    this.qqmapsdk = new QQMapWX({
+      // key: 'OGVBZ-WPSLI-M6NGD-5BHYQ-CS4PE-KCBEG'
+      key: 'EAXBZ-33R3X-AA64F-7FIPQ-BY27J-5UF5B'
+    })
     this.getNow()
   },
 
@@ -51,7 +67,7 @@ Page({
     wx.request({
       url: 'https://test-miniprogram.com/api/weather/now',
       data: {
-        city: '成都市'
+        city: this.data.city
       },
       success: res => {
         let result = res.data.result
@@ -74,7 +90,6 @@ Page({
   setNow(result){
     let temp = result.now.temp
     let weather = result.now.weather
-    console.log(temp, weather)
     this.setData({
       nowTemp: temp + '°',
       nowWeather: weatherMap[weather],
@@ -112,7 +127,49 @@ Page({
   },
   onTapDayWeather(){
     wx.navigateTo({
-      url: '/pages/list/list',
+      url: '/pages/list/list?city=' + this.data.city,
+    })
+  },
+  onTapLocation(){
+    this.getLocation()
+  },
+  getLocation(){
+    wx.getLocation({
+      success: res => {
+        this.setData({
+          locationAuthType: AUTHORIZED,
+          locationTipsText: AUTHORIZED_TIPS
+        })
+        //调用接口
+        this.qqmapsdk.reverseGeocoder({
+          location: {
+            latitude: res.latitude,
+            longitude: res.longitude
+          },
+          success: res => {
+            let city = res.result.address_component.city
+            this.setData({
+              city:city,
+              locationTipsText:''
+            })
+            this.getNow()
+          }
+        })
+      },
+      fail:()=>{
+        this.setData({
+          locationAuthType: UNAUTHORIZED,
+          locationTipsText: UNAUTHORIZED_TIPS
+        })
+      }
     })
   }
 })
+
+
+
+
+
+
+
+
