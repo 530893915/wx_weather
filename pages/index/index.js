@@ -49,7 +49,19 @@ Page({
       // key: 'OGVBZ-WPSLI-M6NGD-5BHYQ-CS4PE-KCBEG'
       key: 'EAXBZ-33R3X-AA64F-7FIPQ-BY27J-5UF5B'
     })
-    this.getNow()
+    wx.getSetting({
+      success:res=>{
+        let auth = res.authSetting['scope.userLocation']
+        this.setData({
+            locationAuthType : auth ? AUTHORIZED : (auth===false) ? UNAUTHORIZED : UNPROMPTED,
+            locationTipsText : auth ? AUTHORIZED_TIPS : (auth===false) ? UNAUTHORIZED_TIPS : UNPROMPTED_TIPS
+        })
+        if(auth)
+          this.getCityAndWeather()
+        else
+          this.getNow()
+      }
+    })  
   },
 
   // 下拉刷新
@@ -131,9 +143,9 @@ Page({
     })
   },
   onTapLocation(){
-    this.getLocation()
+    this.getCityAndWeather()
   },
-  getLocation(){
+  getCityAndWeather(){
     wx.getLocation({
       success: res => {
         this.setData({
@@ -165,11 +177,3 @@ Page({
     })
   }
 })
-
-
-
-
-
-
-
-
